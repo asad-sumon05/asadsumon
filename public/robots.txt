@@ -1,0 +1,84 @@
+# Primary crawl rules
+User-agent: *
+Disallow:
+Allow: /
+Allow: /about
+Allow: /skills
+Allow: /projects
+Allow: /contact
+Allow: /assets/
+Disallow: /node_modules/
+Disallow: /.git/
+
+# Search engine bots
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Googlebot-Image
+Allow: /
+Crawl-delay: 0.5
+
+User-agent: Slurp
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Social media bots
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+# AI bots
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 3
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 2
+
+User-agent: Google-Extended
+Allow: /
+
+# SEO tools
+User-agent: SemrushBot
+Allow: /
+
+User-agent: AhrefsBot
+Allow: /
+
+# Default crawl delay
+User-agent: *
+Crawl-delay: 2
+
+# Sitemap
+Sitemap: https://asadsumon.eu.cc/sitemap.xml
+
+# Host
+Host: https://asadsumon.eu.cc
