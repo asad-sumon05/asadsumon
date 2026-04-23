@@ -78,7 +78,7 @@ User-agent: *
 Crawl-delay: 2
 
 # Sitemap
-Sitemap: https://avdeshjadon.dpdns.org/sitemap.xml
+Sitemap: https://asadsumon.eu.cc/sitemap.xml
 
 # Host
-Host: https://avdeshjadon.dpdns.org
+Host: https://asadsumon.eu.cc
