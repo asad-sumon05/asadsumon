@@ -5,6 +5,7 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CustomCursor from './utils/CursorAnimation'
 import Loader from './components/Loader'
+import GlassBackground from './components/GlassBackground'
 import HomePage from './pages/HomePage'
 import AboutPage from './pages/AboutPage'
 import SkillsPage from './pages/SkillsPage'
@@ -46,6 +47,7 @@ export default function App() {
 
   return (
     <>
+      <GlassBackground />
       <Loader onLoadComplete={() => setIsLoading(false)} />
       <div className={`font-sora scroll-smooth overflow-x-hidden transition-opacity duration-700 ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
         <CustomCursor />

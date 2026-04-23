@@ -18,8 +18,8 @@ export default function About() {
       id="about"
       aria-label="About me"
     >
-      <motion.div className="lg:w-1/2" {...fadeIn("left")}>
-        <img src="/assets/about-me.jpg" alt="About Asaduzzaman Sumon - Full Stack Web Developer illustration" loading="lazy" />
+      <motion.div className="lg:w-1/2 flex justify-center items-center" {...fadeIn("left")}>
+        <img src="/assets/about-me.jpg" alt="About Asaduzzaman Sumon - Full Stack Web Developer illustration" loading="lazy" className="w-full max-w-xl rounded-xl object-cover shadow-sm" />
       </motion.div>
       <motion.div className="lg:w-1/2" {...fadeIn("right", 0.15)}>
         <h2 className="lg:text-3xl text-2xl mt-4 lg:mt-0 font-light text-black dark:text-white transition-colors duration-300">

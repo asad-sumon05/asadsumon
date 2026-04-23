@@ -703,6 +703,10 @@ export default function DinoGame() {
   // ─── Key handler ──────────────────────────────────────────────────────
   useEffect(() => {
     const onKey = (e) => {
+      // Ignore key events if focus is on an input or textarea
+      const targetTag = e.target.tagName;
+      if (targetTag === 'INPUT' || targetTag === 'TEXTAREA') return;
+
       if (e.code === 'Space' || e.code === 'ArrowUp') {
         e.preventDefault()
         if (gameState === 'idle' || gameState === 'dead') {

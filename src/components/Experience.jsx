@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const experiences = [
   {
-    role: "Intern Web Developer",
+    role: "Junior Web Developer",
     company: "OnDevs",
     duration: "03/2025 – Present",
     location: "Dhaka, Bangladesh",
