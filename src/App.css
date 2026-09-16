@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: var(--font-geist-sans);
+}
+
+@import "./components/lightswind.css";
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist Sans";
+  src: url("../node_modules/@vercel/fonts/geist-sans/GeistSans-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Theme-specific typography */
+html[data-portfolio-theme="portfolio1"],
+html[data-portfolio-theme="portfolio1"] body,
+html[data-portfolio-theme="portfolio1"] button,
+html[data-portfolio-theme="portfolio1"] input,
+html[data-portfolio-theme="portfolio1"] textarea {
+  font-family: "Geist Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html[data-portfolio-theme="classic"],
+html[data-portfolio-theme="classic"] body,
+html[data-portfolio-theme="classic"] button,
+html[data-portfolio-theme="classic"] input,
+html[data-portfolio-theme="classic"] textarea {
+  font-family: "Sora", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html[data-portfolio-theme="spiderman"],
+html[data-portfolio-theme="spiderman"] body,
+html[data-portfolio-theme="spiderman"] button,
+html[data-portfolio-theme="spiderman"] input,
+html[data-portfolio-theme="spiderman"] textarea {
+  font-family: "Outfit", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Default font fallback */
+body {
+  font-family: "Geist Sans", sans-serif;
+}
+
+/* Spider-Man specific scrollbar */
+html[data-portfolio-theme="spiderman"]::-webkit-scrollbar {
+  width: 8px;
+}
+html[data-portfolio-theme="spiderman"]::-webkit-scrollbar-track {
+  background: #0f0f0f;
+}
+html[data-portfolio-theme="spiderman"]::-webkit-scrollbar-thumb {
+  background: #a31515;
+  border-radius: 4px;
+}
+html[data-portfolio-theme="spiderman"]::-webkit-scrollbar-thumb:hover {
+  background: #ef4444;
+}
