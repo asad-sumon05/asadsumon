@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asaduzzaman Sumon — CSE Engineer, Web Developer &amp; Graphic Designer</title>
+
+    <!-- Fonts & Icons -->
+    <link rel="preload" href="/fonts/onest-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Primary Metadata -->
+    <meta
+      name="description"
+      content="Portfolio of Asaduzzaman Sumon: CSE Engineer, Web Developer and Graphic Designer experienced in MERN stack, Python, responsive frontend development and branding. Based in Bangladesh, working remotely."
+    />
+    <meta name="theme-color" content="#1A1818" />
+
+    <!-- Theme & Hardware Performance Pre-check -->
+    <script>
+      try {
+        const storedMode = localStorage.getItem('sumon-mode') || localStorage.getItem('rishi-mode');
+        if (storedMode === 'dark') {
+          document.documentElement.dataset.mode = 'dark';
+        }
+      } catch {}
+
+      (function () {
+        const nav = navigator;
+        const memory = nav.deviceMemory || 8;
+        const cores = nav.hardwareConcurrency || 8;
+        const saveData = nav.connection && nav.connection.saveData;
+        if (memory <= 2 || cores <= 2 || saveData) {
+          document.documentElement.classList.add('lite');
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <!-- React Root Entry -->
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

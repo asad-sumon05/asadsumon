@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-mern",
+  "version": "1.0.0",
+  "description": "Portfolio MERN Stack Migration",
+  "private": true,
+  "scripts": {
+    "dev": "npm run dev --prefix client",
+    "server": "npm run dev --prefix server",
+    "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  }
+}

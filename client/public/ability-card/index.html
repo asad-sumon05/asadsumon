@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#050404" />
+    <title>Asaduzzaman Sumon — Ability Card</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- 3D Interactive Card Scene -->
+    <div id="scene">
+      <button class="close-btn" id="closeBtn" aria-label="Close card">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      <div class="card-container" id="card">
+        <div class="card-face card-front">
+          <img src="../card/body.webp" alt="" class="bg" />
+          <img src="../card/win_bg.webp" alt="" class="plate" />
+          <img src="../card/win_sub.webp" alt="" class="plate" />
+          <img src="../card/plate.webp" alt="" class="plate" />
+          <div class="card-sheen" id="sheen"></div>
+        </div>
+
+        <div class="card-face card-back">
+          <img src="../card/back.webp" alt="Card back" />
+        </div>
+      </div>
+
+      <div class="card-hint">Drag to rotate · Click to flip</div>
+    </div>
+
+    <!-- 3D Card Interaction Script -->
+    <script>
+      (function () {
+        'use strict';
+
+        const card = document.getElementById('card');
+        const scene = document.getElementById('scene');
+        const sheen = document.getElementById('sheen');
+        const closeBtn = document.getElementById('closeBtn');
+
+        let rx = 0;
+        let ry = 0;
+        let isDown = false;
+        let startX = 0;
+        let startY = 0;
+        let flipped = false;
+
+        // Signal parent modal that the 3D asset is ready
+        try {
+          parent.postMessage({ holo: 'progress', p: 1 }, '*');
+          parent.postMessage({ holo: 'up' }, '*');
+          parent.postMessage({ holo: 'ready' }, '*');
+        } catch {}
+
+        closeBtn.addEventListener('click', () => {
+          try {
+            parent.postMessage({ holo: 'close' }, '*');
+          } catch {}
+        });
+
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            try {
+              parent.postMessage({ holo: 'close' }, '*');
+            } catch {}
+          }
+        });
+
+        const updateTransform = () => {
+          const baseFlip = flipped ? 180 : 0;
+          card.style.transform = `rotateX(${rx}deg) rotateY(${ry + baseFlip}deg)`;
+        };
+
+        const onPointerMove = (e) => {
+          const rect = scene.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const px = (e.clientX - cx) / (rect.width / 2);
+          const py = (e.clientY - cy) / (rect.height / 2);
+
+          const mx = ((e.clientX - rect.left) / rect.width) * 100;
+          const my = ((e.clientY - rect.top) / rect.height) * 100;
+          sheen.style.setProperty('--mx', `${mx}%`);
+          sheen.style.setProperty('--my', `${my}%`);
+
+          if (isDown) {
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            ry += dx * 0.4;
+            rx -= dy * 0.4;
+            startX = e.clientX;
+            startY = e.clientY;
+            updateTransform();
+          } else if (!flipped) {
+            card.style.transform = `rotateX(${-py * 16}deg) rotateY(${px * 20}deg)`;
+          }
+        };
+
+        scene.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('#closeBtn')) return;
+          isDown = true;
+          startX = e.clientX;
+          startY = e.clientY;
+          try {
+            scene.setPointerCapture(e.pointerId);
+          } catch {}
+        });
+
+        window.addEventListener('pointerup', (e) => {
+          if (!isDown) return;
+          isDown = false;
+          try {
+            scene.releasePointerCapture(e.pointerId);
+          } catch {}
+          const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+          if (dist < 5) {
+            flipped = !flipped;
+            updateTransform();
+          }
+        });
+
+        window.addEventListener('pointermove', onPointerMove);
+
+        // Gyroscopic tilt for mobile devices
+        if (window.DeviceOrientationEvent) {
+          window.addEventListener('deviceorientation', (e) => {
+            if (isDown || flipped) return;
+            const gamma = Math.min(30, Math.max(-30, e.gamma || 0));
+            const beta = Math.min(30, Math.max(-30, e.beta || 0));
+            card.style.transform = `rotateX(${beta * 0.5}deg) rotateY(${gamma * 0.6}deg)`;
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>
