@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/((?!assets/|fonts/|vendor/|card/|ability-card/|app-developer/|graphic-designer/|legal/|photographer/|ui-ux-designer/|web-developer/|api/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

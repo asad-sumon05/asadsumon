@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Portfolio MERN Stack Migration",
   "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
     "dev": "npm run dev --prefix client",
     "server": "npm run dev --prefix server",

@@ -9,6 +9,7 @@ const publicDir = path.resolve(__dirname, 'public')
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [
     react(),
     {
@@ -26,6 +27,17 @@ export default defineConfig({
           }
           next()
         })
+      },
+    },
+    {
+      name: 'copy-404-for-spa',
+      closeBundle() {
+        const distDir = path.resolve(__dirname, 'dist')
+        const indexHtml = path.join(distDir, 'index.html')
+        const notFoundHtml = path.join(distDir, '404.html')
+        if (fs.existsSync(indexHtml)) {
+          fs.copyFileSync(indexHtml, notFoundHtml)
+        }
       },
     },
   ],

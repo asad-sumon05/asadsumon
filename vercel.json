@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "buildCommand": "cd client && npm install && npm run build",
+  "outputDirectory": "client/dist",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/((?!assets/|fonts/|vendor/|card/|ability-card/|app-developer/|graphic-designer/|legal/|photographer/|ui-ux-designer/|web-developer/|api/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
