@@ -47,33 +47,36 @@ export default async function handler(req, res) {
     // Persist inquiry to MongoDB if configured
     if (process.env.MONGODB_URI) {
       try {
-        const mongoose = (await import('mongoose')).default;
-        if (mongoose.connection.readyState === 0) {
-          await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 5000 });
-        }
-        const Contact =
-          mongoose.models.Contact ||
-          mongoose.model(
-            'Contact',
-            new mongoose.Schema(
-              {
-                name: { type: String, required: true },
-                email: { type: String, required: true },
-                project: { type: String, required: true },
-                ip: { type: String },
-                userAgent: { type: String },
-              },
-              { timestamps: true }
-            )
-          );
+        const mongooseModule = await import('mongoose').catch(() => null);
+        if (mongooseModule) {
+          const mongoose = mongooseModule.default;
+          if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 5000 });
+          }
+          const Contact =
+            mongoose.models.Contact ||
+            mongoose.model(
+              'Contact',
+              new mongoose.Schema(
+                {
+                  name: { type: String, required: true },
+                  email: { type: String, required: true },
+                  project: { type: String, required: true },
+                  ip: { type: String },
+                  userAgent: { type: String },
+                },
+                { timestamps: true }
+              )
+            );
 
-        await Contact.create({
-          name: trimmedName,
-          email: trimmedEmail,
-          project: trimmedProject,
-          ip: clientIp,
-          userAgent,
-        });
+          await Contact.create({
+            name: trimmedName,
+            email: trimmedEmail,
+            project: trimmedProject,
+            ip: clientIp,
+            userAgent,
+          });
+        }
       } catch (dbErr) {
         console.warn('MongoDB connection/save warning:', dbErr.message);
       }
@@ -137,36 +140,39 @@ export default async function handler(req, res) {
     // 2. Fallback to Nodemailer if SMTP/EMAIL_PASS is provided
     if (!emailSent && emailPass) {
       try {
-        const nodemailer = (await import('nodemailer')).default;
-        const transporter = nodemailer.createTransport(
-          process.env.SMTP_HOST
-            ? {
-                host: process.env.SMTP_HOST,
-                port: Number(process.env.SMTP_PORT) || 587,
-                secure: process.env.SMTP_SECURE === 'true',
-                auth: {
-                  user: process.env.SMTP_USER || emailUser,
-                  pass: emailPass,
-                },
-              }
-            : {
-                service: 'gmail',
-                auth: {
-                  user: emailUser,
-                  pass: emailPass,
-                },
-              }
-        );
+        const nodemailerModule = await import('nodemailer').catch(() => null);
+        if (nodemailerModule) {
+          const nodemailer = nodemailerModule.default;
+          const transporter = nodemailer.createTransport(
+            process.env.SMTP_HOST
+              ? {
+                  host: process.env.SMTP_HOST,
+                  port: Number(process.env.SMTP_PORT) || 587,
+                  secure: process.env.SMTP_SECURE === 'true',
+                  auth: {
+                    user: process.env.SMTP_USER || emailUser,
+                    pass: emailPass,
+                  },
+                }
+              : {
+                  service: 'gmail',
+                  auth: {
+                    user: emailUser,
+                    pass: emailPass,
+                  },
+                }
+          );
 
-        await transporter.sendMail({
-          from: `"Portfolio Contact" <${emailUser}>`,
-          to: recipientEmail,
-          replyTo: `${trimmedName} <${trimmedEmail}>`,
-          subject: `New project enquiry from ${trimmedName}`,
-          text: `Name: ${trimmedName}\nEmail: ${trimmedEmail}\n\nProject details:\n${trimmedProject}`,
-          html: emailHtml,
-        });
-        emailSent = true;
+          await transporter.sendMail({
+            from: `"Portfolio Contact" <${emailUser}>`,
+            to: recipientEmail,
+            replyTo: `${trimmedName} <${trimmedEmail}>`,
+            subject: `New project enquiry from ${trimmedName}`,
+            text: `Name: ${trimmedName}\nEmail: ${trimmedEmail}\n\nProject details:\n${trimmedProject}`,
+            html: emailHtml,
+          });
+          emailSent = true;
+        }
       } catch (mailErr) {
         console.error('Failed to dispatch email via Nodemailer:', mailErr);
       }
