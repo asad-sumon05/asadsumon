@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Portfolio MERN Stack Migration",
   "private": true,
+  "type": "module",
   "workspaces": [
     "client",
     "server"
@@ -12,5 +13,8 @@
     "server": "npm run dev --prefix server",
     "build": "npm run build --prefix client",
     "start": "npm run start --prefix server"
+  },
+  "dependencies": {
+    "nodemailer": "^10.5.0"
   }
 }

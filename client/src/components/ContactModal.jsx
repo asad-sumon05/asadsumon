@@ -154,8 +154,17 @@ export default function ContactModal({ isOpen, onClose }) {
         }),
       });
 
+      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
         throw new Error(`HTTP ${res.status}`);
+      }
+
+      // If backend accepted the entry but could not send email (e.g. SMTP not configured),
+      // cleanly fallback to mail client so the message is guaranteed to reach asad.sumon05@gmail.com
+      if (data && data.emailSent === false) {
+        viaMail();
+        return;
       }
 
       setSuccessState({

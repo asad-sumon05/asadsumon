@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import mongoose from 'mongoose';
+import nodemailer from 'nodemailer';
 import Contact from './models/Contact.js';
 
 // ============================================================================
@@ -120,8 +121,98 @@ app.post('/api/contact', async (req, res) => {
       });
     }
 
+    // Email dispatch (supports Resend API key or Nodemailer SMTP)
+    const recipientEmail = process.env.CONTACT_RECIPIENT_EMAIL || 'asad.sumon05@gmail.com';
+    let emailSent = false;
+    const emailUser = process.env.EMAIL_USER || 'asad.sumon05@gmail.com';
+    const emailPass = process.env.EMAIL_PASS || process.env.SMTP_PASS;
+
+    const emailHtml = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #eaeaea; border-radius: 8px;">
+        <h2 style="margin-top: 0; color: #111;">New Project Enquiry</h2>
+        <p style="margin: 8px 0;"><strong>Name:</strong> ${trimmedName}</p>
+        <p style="margin: 8px 0;"><strong>Email:</strong> <a href="mailto:${trimmedEmail}">${trimmedEmail}</a></p>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;" />
+        <p style="margin: 8px 0; font-weight: bold;">Project Details:</p>
+        <div style="background-color: #f9f9f9; padding: 16px; border-radius: 6px; white-space: pre-wrap; line-height: 1.6; color: #333;">${trimmedProject}</div>
+        <hr style="border: none; border-top: 1px solid #eee; margin: 16px 0;" />
+        <p style="font-size: 12px; color: #888; margin-bottom: 0;">Sent from your Portfolio contact modal.</p>
+      </div>
+    `;
+
+    // 1. Try Resend API if RESEND_API_KEY is provided
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const resendRes = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: process.env.RESEND_FROM || 'Portfolio Contact <onboarding@resend.dev>',
+            to: [recipientEmail],
+            reply_to: trimmedEmail,
+            subject: `New project enquiry from ${trimmedName}`,
+            html: emailHtml,
+          }),
+        });
+
+        if (resendRes.ok) {
+          emailSent = true;
+        } else {
+          const errData = await resendRes.json().catch(() => ({}));
+          console.error('Resend API error:', errData);
+        }
+      } catch (resendErr) {
+        console.error('Failed to dispatch email via Resend:', resendErr);
+      }
+    }
+
+    // 2. Fallback to Nodemailer if SMTP/EMAIL_PASS is provided
+    if (!emailSent && emailPass) {
+      try {
+        const transporter = nodemailer.createTransport(
+          process.env.SMTP_HOST
+            ? {
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT) || 587,
+                secure: process.env.SMTP_SECURE === 'true',
+                auth: {
+                  user: process.env.SMTP_USER || emailUser,
+                  pass: emailPass,
+                },
+              }
+            : {
+                service: 'gmail',
+                auth: {
+                  user: emailUser,
+                  pass: emailPass,
+                },
+              }
+        );
+
+        await transporter.sendMail({
+          from: `"Portfolio Contact" <${emailUser}>`,
+          to: recipientEmail,
+          replyTo: `${trimmedName} <${trimmedEmail}>`,
+          subject: `New project enquiry from ${trimmedName}`,
+          text: `Name: ${trimmedName}\nEmail: ${trimmedEmail}\n\nProject details:\n${trimmedProject}`,
+          html: emailHtml,
+        });
+        emailSent = true;
+      } catch (mailErr) {
+        console.error('Failed to dispatch email via Nodemailer:', mailErr);
+      }
+    }
+
+    if (!emailSent && !process.env.RESEND_API_KEY && !emailPass) {
+      console.warn('Neither RESEND_API_KEY nor EMAIL_PASS is set. Direct email notification not active.');
+    }
+
     return res.status(201).json({
       success: true,
+      emailSent,
       message: `Thank you, ${trimmedName}. Your message has been received!`,
     });
   } catch (error) {
